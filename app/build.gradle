@@ -7,7 +7,7 @@ android {
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.commandiron.wheelpickercompose"
+        applicationId "com.mzdon.wheelpickercompose"
         minSdk 21
         targetSdk 33
         versionCode 1
@@ -63,5 +63,4 @@ dependencies {
 
     implementation project(':wheel-picker-compose')
     coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:1.1.6"
-//    implementation 'com.github.commandiron:WheelPickerCompose:1.0.11'
 }
