@@ -17,11 +17,15 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.commandiron.wheel_picker_compose.WheelDatePicker
 import com.commandiron.wheel_picker_compose.WheelDateTimePicker
+import com.commandiron.wheel_picker_compose.WheelDurationPicker
 import com.commandiron.wheel_picker_compose.WheelTimePicker
+import com.commandiron.wheel_picker_compose.core.DurationFormat
 import com.commandiron.wheel_picker_compose.core.TimeFormat
 import com.commandiron.wheel_picker_compose.core.WheelPickerDefaults
 import com.commandiron.wheelpickercompose.ui.theme.WheelPickerComposeTheme
 import java.time.LocalDateTime
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,8 +68,25 @@ class MainActivity : ComponentActivity() {
                                 color = Color(0xFFf1faee).copy(alpha = 0.2f),
                                 border = BorderStroke(2.dp, Color(0xFFf1faee))
                             )
-                        ){ snappedDateTime ->
+                        ) { snappedDateTime ->
                             println(snappedDateTime)
+                        }
+                        WheelDurationPicker(
+                            startDuration = 0.toDuration(DurationUnit.HOURS),
+                            maxDuration = 30.toDuration(DurationUnit.MINUTES),
+                            durationFormat = DurationFormat.MINUTES_SECONDS,
+                            size = DpSize(200.dp, 100.dp),
+                            rowCount = 5,
+                            textStyle = MaterialTheme.typography.titleSmall,
+                            textColor = Color(0xFFffc300),
+                            selectorProperties = WheelPickerDefaults.selectorProperties(
+                                enabled = true,
+                                shape = RoundedCornerShape(0.dp),
+                                color = Color(0xFFf1faee).copy(alpha = 0.2f),
+                                border = BorderStroke(2.dp, Color(0xFFf1faee))
+                            )
+                        ) { snappedTime ->
+                            println(snappedTime)
                         }
                     }
                 }
