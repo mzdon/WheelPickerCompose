@@ -72,7 +72,7 @@ class MainActivity : ComponentActivity() {
                             println(snappedDateTime)
                         }
                         WheelDurationPicker(
-                            startDuration = 0.toDuration(DurationUnit.HOURS),
+                            startDuration = 15.toDuration(DurationUnit.MINUTES),
                             minDuration = 1.toDuration(DurationUnit.MINUTES),
                             maxDuration = 30.toDuration(DurationUnit.MINUTES),
                             durationFormat = DurationFormat.MINUTES_SECONDS,

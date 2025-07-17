@@ -1,7 +1,11 @@
 package com.commandiron.wheel_picker_compose.core
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListState
@@ -9,7 +13,13 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -39,13 +49,13 @@ internal fun WheelPicker(
     val isScrollInProgress = lazyListState.isScrollInProgress
 
     LaunchedEffect(focusedIndex) {
-        if(calculateSnappedItemIndex(snapperLayoutInfo)?.let { it != focusedIndex } == true) {
+        if (calculateSnappedItemIndex(snapperLayoutInfo)?.let { it != focusedIndex } == true) {
             lazyListState.scrollToItem(focusedIndex)
         }
     }
 
     LaunchedEffect(isScrollInProgress, count) {
-        if(!isScrollInProgress) {
+        if (!isScrollInProgress) {
             onScrollFinished(calculateSnappedItemIndex(snapperLayoutInfo) ?: focusedIndex)?.let {
                 lazyListState.scrollToItem(it)
             }
@@ -56,7 +66,7 @@ internal fun WheelPicker(
         modifier = modifier,
         contentAlignment = Alignment.Center
     ) {
-        if(selectorProperties.enabled().value){
+        if (selectorProperties.enabled().value) {
             Surface(
                 modifier = Modifier
                     .size(size.width, size.height / rowCount),
@@ -70,12 +80,12 @@ internal fun WheelPicker(
                 .height(size.height)
                 .width(size.width),
             state = lazyListState,
-            contentPadding = PaddingValues(vertical = size.height / rowCount * ((rowCount - 1 )/ 2)),
+            contentPadding = PaddingValues(vertical = size.height / rowCount * ((rowCount - 1) / 2)),
             flingBehavior = rememberSnapperFlingBehavior(
                 lazyListState = lazyListState
             )
-        ){
-            items(count){ index ->
+        ) {
+            items(count) { index ->
                 val rotationX = calculateAnimatedRotationX(
                     lazyListState = lazyListState,
                     snapperLayoutInfo = snapperLayoutInfo,
@@ -109,9 +119,9 @@ internal fun WheelPicker(
 private fun calculateSnappedItemIndex(snapperLayoutInfo: SnapperLayoutInfo): Int? {
     var currentItemIndex = snapperLayoutInfo.currentItem?.index
 
-    if(snapperLayoutInfo.currentItem?.offset != 0) {
-        if(currentItemIndex != null) {
-            currentItemIndex ++
+    if ((snapperLayoutInfo.currentItem?.offset ?: 0) > 0) {
+        if (currentItemIndex != null) {
+            currentItemIndex++
         }
     }
     return currentItemIndex
@@ -130,7 +140,7 @@ private fun calculateAnimatedAlpha(
     val viewPortHeight = layoutInfo.viewportSize.height.toFloat()
     val singleViewPortHeight = viewPortHeight / rowCount
 
-    return if(distanceToIndexSnap in 0..singleViewPortHeight.toInt()) {
+    return if (distanceToIndexSnap in 0..singleViewPortHeight.toInt()) {
         1.2f - (distanceToIndexSnap / singleViewPortHeight)
     } else {
         0.2f
@@ -158,7 +168,7 @@ private fun calculateAnimatedRotationX(
     }
 }
 
-object WheelPickerDefaults{
+object WheelPickerDefaults {
     @Composable
     fun selectorProperties(
         enabled: Boolean = true,
@@ -176,10 +186,13 @@ object WheelPickerDefaults{
 interface SelectorProperties {
     @Composable
     fun enabled(): State<Boolean>
+
     @Composable
     fun shape(): State<Shape>
+
     @Composable
     fun color(): State<Color>
+
     @Composable
     fun border(): State<BorderStroke?>
 }
