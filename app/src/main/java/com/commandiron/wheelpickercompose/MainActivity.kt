@@ -73,6 +73,7 @@ class MainActivity : ComponentActivity() {
                         }
                         WheelDurationPicker(
                             startDuration = 0.toDuration(DurationUnit.HOURS),
+                            minDuration = 1.toDuration(DurationUnit.MINUTES),
                             maxDuration = 30.toDuration(DurationUnit.MINUTES),
                             durationFormat = DurationFormat.MINUTES_SECONDS,
                             size = DpSize(200.dp, 100.dp),

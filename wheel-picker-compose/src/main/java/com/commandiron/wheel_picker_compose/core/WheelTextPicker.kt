@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun WheelTextPicker(
     modifier: Modifier = Modifier,
-    startIndex: Int = 0,
+    focusedIndex: Int = 0,
     size: DpSize = DpSize(128.dp, 128.dp),
     texts: List<String>,
     rowCount: Int,
@@ -24,7 +24,7 @@ fun WheelTextPicker(
 ) {
     WheelPicker(
         modifier = modifier,
-        startIndex = startIndex,
+        focusedIndex = focusedIndex,
         size = size,
         count = texts.size,
         rowCount = rowCount,

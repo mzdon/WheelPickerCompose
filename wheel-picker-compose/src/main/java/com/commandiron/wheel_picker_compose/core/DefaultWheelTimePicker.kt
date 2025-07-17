@@ -96,7 +96,7 @@ internal fun DefaultWheelTimePicker(
                 rowCount = rowCount,
                 style = textStyle,
                 color = textColor,
-                startIndex =  if(timeFormat == TimeFormat.HOUR_24) {
+                focusedIndex =  if(timeFormat == TimeFormat.HOUR_24) {
                     hours.find { it.value == startTime.hour }?.index ?: 0
                 } else amPmHours.find { it.value ==  localTimeToAmPmHour(startTime) }?.index ?: 0,
                 selectorProperties = WheelPickerDefaults.selectorProperties(
@@ -156,7 +156,7 @@ internal fun DefaultWheelTimePicker(
                 rowCount = rowCount,
                 style = textStyle,
                 color = textColor,
-                startIndex = minutes.find { it.value == startTime.minute }?.index ?: 0,
+                focusedIndex = minutes.find { it.value == startTime.minute }?.index ?: 0,
                 selectorProperties = WheelPickerDefaults.selectorProperties(
                     enabled = false
                 ),
@@ -210,7 +210,7 @@ internal fun DefaultWheelTimePicker(
                     rowCount = rowCount,
                     style = textStyle,
                     color = textColor,
-                    startIndex = amPms.find { it.value == amPmValueFromTime(startTime) }?.index ?:0,
+                    focusedIndex = amPms.find { it.value == amPmValueFromTime(startTime) }?.index ?:0,
                     selectorProperties = WheelPickerDefaults.selectorProperties(
                         enabled = false
                     ),

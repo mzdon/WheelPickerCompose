@@ -40,37 +40,39 @@ internal fun DefaultWheelDurationPicker(
 
     var snappedDuration by remember { mutableStateOf(startDuration) }
 
-    val days = (minDuration.minDays.coerceAtLeast(0)..maxDuration.maxDays.coerceAtMost(100)).map {
-        D(
-            text = it.toString(),
-            value = it,
-            index = it
-        )
-    }
+    val days =
+        (minDuration.minDays.coerceAtLeast(0)..maxDuration.maxDays.coerceAtMost(100)).mapIndexed { idx, it ->
+            D(
+                text = it.toString(),
+                value = it,
+                index = idx
+            )
+        }
 
-    val hours = (minDuration.minHours.coerceAtLeast(0)..maxDuration.maxHours.coerceAtMost(24)).map {
-        H(
-            text = it.toString().padStart(2, '0'),
-            value = it,
-            index = it
-        )
-    }
+    val hours =
+        (minDuration.minHours.coerceAtLeast(0)..maxDuration.maxHours.coerceAtMost(23)).mapIndexed { idx, it ->
+            H(
+                text = it.toString().padStart(2, '0'),
+                value = it,
+                index = idx
+            )
+        }
 
     val minutes =
-        (minDuration.minMinutes.coerceAtLeast(0)..maxDuration.maxMinutes.coerceAtMost(59)).map {
+        (minDuration.minMinutes.coerceAtLeast(0)..maxDuration.maxMinutes.coerceAtMost(59)).mapIndexed { idx, it ->
             M(
                 text = it.toString().padStart(2, '0'),
                 value = it,
-                index = it
+                index = idx
             )
         }
 
     val seconds =
-        (minDuration.minSeconds.coerceAtLeast(0)..maxDuration.maxSeconds.coerceAtMost(59)).map {
+        (minDuration.minSeconds.coerceAtLeast(0)..maxDuration.maxSeconds.coerceAtMost(59)).mapIndexed { idx, it ->
             S(
                 text = it.toString().padStart(2, '0'),
                 value = it,
-                index = it
+                index = idx
             )
         }
 
@@ -95,7 +97,7 @@ internal fun DefaultWheelDurationPicker(
                     rowCount = rowCount,
                     style = textStyle,
                     color = textColor,
-                    startIndex = days.indexOfFirst { it.value == startDuration.days }
+                    focusedIndex = days.indexOfFirst { it.value == snappedDuration.days }
                         .coerceAtLeast(0),
                     selectorProperties = WheelPickerDefaults.selectorProperties(
                         enabled = false
@@ -104,22 +106,16 @@ internal fun DefaultWheelDurationPicker(
                         val newDay = days.find { it.index == snappedIndex }?.value
 
                         newDay?.let {
-                            val newDuration: Duration =
+                            snappedDuration =
                                 snappedDuration.toComponents { days, hours, minutes, seconds, _ ->
                                     newDay.toDuration(DurationUnit.DAYS) +
                                             hours.toDuration(DurationUnit.HOURS) +
                                             minutes.toDuration(DurationUnit.MINUTES) +
                                             seconds.toDuration(DurationUnit.SECONDS)
-                                }
+                                }.coerceIn(minDuration, maxDuration)
 
-                            if (!newDuration.isBefore(minDuration) && !newDuration.isAfter(
-                                    maxDuration
-                                )
-                            ) {
-                                snappedDuration = newDuration
-                            }
-
-                            val newIndex = days.find { it.value == newDay }?.index
+                            val coercedDay = snappedDuration.days
+                            val newIndex = days.find { it.value == coercedDay }?.index
 
                             newIndex?.let {
                                 onSnappedDuration(
@@ -149,7 +145,7 @@ internal fun DefaultWheelDurationPicker(
                     rowCount = rowCount,
                     style = textStyle,
                     color = textColor,
-                    startIndex = hours.indexOfFirst { it.value == startDuration.hours }
+                    focusedIndex = hours.indexOfFirst { it.value == snappedDuration.hours }
                         .coerceAtLeast(0),
                     selectorProperties = WheelPickerDefaults.selectorProperties(
                         enabled = false
@@ -158,23 +154,20 @@ internal fun DefaultWheelDurationPicker(
                         val newHour = hours.find { it.index == snappedIndex }?.value
 
                         newHour?.let {
-
-                            val newDuration: Duration =
+                            snappedDuration =
                                 snappedDuration.toComponents { days, hours, minutes, seconds, _ ->
                                     days.toDuration(DurationUnit.DAYS) +
                                             newHour.toDuration(DurationUnit.HOURS) +
                                             minutes.toDuration(DurationUnit.MINUTES) +
                                             seconds.toDuration(DurationUnit.SECONDS)
-                                }
+                                }.coerceIn(minDuration, maxDuration)
 
-                            if (!newDuration.isBefore(minDuration) && !newDuration.isAfter(
-                                    maxDuration
-                                )
-                            ) {
-                                snappedDuration = newDuration
+                            val coercedHour = if (snappedDuration.days > 0) {
+                                snappedDuration.hours.coerceAtMost(23)
+                            } else {
+                                snappedDuration.hours
                             }
-
-                            val newIndex = hours.find { it.value == newHour }?.index
+                            val newIndex = hours.find { it.value == coercedHour }?.index
 
                             newIndex?.let {
                                 onSnappedDuration(
@@ -204,7 +197,7 @@ internal fun DefaultWheelDurationPicker(
                     rowCount = rowCount,
                     style = textStyle,
                     color = textColor,
-                    startIndex = minutes.indexOfFirst { it.value == startDuration.minutes }
+                    focusedIndex = minutes.indexOfFirst { it.value == snappedDuration.minutes }
                         .coerceAtLeast(0),
                     selectorProperties = WheelPickerDefaults.selectorProperties(
                         enabled = false
@@ -213,22 +206,16 @@ internal fun DefaultWheelDurationPicker(
                         val newMinute = minutes.find { it.index == snappedIndex }?.value
 
                         newMinute?.let {
-                            val newDuration: Duration =
+                            snappedDuration =
                                 snappedDuration.toComponents { days, hours, minutes, seconds, _ ->
                                     days.toDuration(DurationUnit.DAYS) +
                                             hours.toDuration(DurationUnit.HOURS) +
                                             newMinute.toDuration(DurationUnit.MINUTES) +
                                             seconds.toDuration(DurationUnit.SECONDS)
-                                }
+                                }.coerceIn(minDuration, maxDuration)
 
-                            if (!newDuration.isBefore(minDuration) && !newDuration.isAfter(
-                                    maxDuration
-                                )
-                            ) {
-                                snappedDuration = newDuration
-                            }
-
-                            val newIndex = minutes.find { it.value == newMinute }?.index
+                            val coercedMinute = snappedDuration.minutes
+                            val newIndex = minutes.find { it.value == coercedMinute }?.index
 
                             newIndex?.let {
                                 onSnappedDuration(
@@ -257,7 +244,7 @@ internal fun DefaultWheelDurationPicker(
                     rowCount = rowCount,
                     style = textStyle,
                     color = textColor,
-                    startIndex = seconds.indexOfFirst { it.value == startDuration.seconds }
+                    focusedIndex = seconds.indexOfFirst { it.value == snappedDuration.seconds }
                         .coerceAtLeast(0),
                     selectorProperties = WheelPickerDefaults.selectorProperties(
                         enabled = false
@@ -266,22 +253,16 @@ internal fun DefaultWheelDurationPicker(
                         val newSecond = seconds.find { it.index == snappedIndex }?.value
 
                         newSecond?.let {
-                            val newDuration: Duration =
+                            snappedDuration =
                                 snappedDuration.toComponents { days, hours, minutes, seconds, _ ->
                                     days.toDuration(DurationUnit.DAYS) +
                                             hours.toDuration(DurationUnit.HOURS) +
                                             minutes.toDuration(DurationUnit.MINUTES) +
                                             newSecond.toDuration(DurationUnit.SECONDS)
-                                }
+                                }.coerceIn(minDuration, maxDuration)
 
-                            if (!newDuration.isBefore(minDuration) && !newDuration.isAfter(
-                                    maxDuration
-                                )
-                            ) {
-                                snappedDuration = newDuration
-                            }
-
-                            val newIndex = seconds.find { it.value == newSecond }?.index
+                            val coercedSecond = snappedDuration.seconds
+                            val newIndex = seconds.find { it.value == coercedSecond }?.index
 
                             newIndex?.let {
                                 onSnappedDuration(

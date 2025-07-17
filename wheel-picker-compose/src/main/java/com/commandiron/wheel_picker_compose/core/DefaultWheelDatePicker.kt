@@ -76,7 +76,7 @@ internal fun DefaultWheelDatePicker(
                 selectorProperties = WheelPickerDefaults.selectorProperties(
                     enabled = false
                 ),
-                startIndex = dayOfMonths.find { it.value== startDate.dayOfMonth }?.index ?: 0,
+                focusedIndex = dayOfMonths.find { it.value== startDate.dayOfMonth }?.index ?: 0,
                 onScrollFinished = { snappedIndex ->
 
                     val newDayOfMonth = dayOfMonths.find { it.index == snappedIndex }?.value
@@ -116,7 +116,7 @@ internal fun DefaultWheelDatePicker(
                 selectorProperties = WheelPickerDefaults.selectorProperties(
                     enabled = false
                 ),
-                startIndex = months.find { it.value== startDate.monthValue }?.index ?: 0,
+                focusedIndex = months.find { it.value== startDate.monthValue }?.index ?: 0,
                 onScrollFinished = { snappedIndex ->
 
                     val newMonth = months.find { it.index == snappedIndex }?.value
@@ -161,7 +161,7 @@ internal fun DefaultWheelDatePicker(
                     selectorProperties = WheelPickerDefaults.selectorProperties(
                         enabled = false
                     ),
-                    startIndex = years.find { it.value == startDate.year }?.index ?:0,
+                    focusedIndex = years.find { it.value == startDate.year }?.index ?:0,
                     onScrollFinished = { snappedIndex ->
 
                         val newYear = years.find { it.index == snappedIndex }?.value

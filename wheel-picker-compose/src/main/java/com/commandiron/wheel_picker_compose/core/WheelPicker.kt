@@ -26,7 +26,7 @@ import kotlin.math.absoluteValue
 @Composable
 internal fun WheelPicker(
     modifier: Modifier = Modifier,
-    startIndex: Int = 0,
+    focusedIndex: Int = 0,
     count: Int,
     rowCount: Int,
     size: DpSize = DpSize(128.dp, 128.dp),
@@ -34,13 +34,19 @@ internal fun WheelPicker(
     onScrollFinished: (snappedIndex: Int) -> Int? = { null },
     content: @Composable LazyItemScope.(index: Int) -> Unit,
 ) {
-    val lazyListState = rememberLazyListState(startIndex)
+    val lazyListState = rememberLazyListState(focusedIndex)
     val snapperLayoutInfo = rememberLazyListSnapperLayoutInfo(lazyListState = lazyListState)
     val isScrollInProgress = lazyListState.isScrollInProgress
 
+    LaunchedEffect(focusedIndex) {
+        if(calculateSnappedItemIndex(snapperLayoutInfo)?.let { it != focusedIndex } == true) {
+            lazyListState.scrollToItem(focusedIndex)
+        }
+    }
+
     LaunchedEffect(isScrollInProgress, count) {
         if(!isScrollInProgress) {
-            onScrollFinished(calculateSnappedItemIndex(snapperLayoutInfo) ?: startIndex)?.let {
+            onScrollFinished(calculateSnappedItemIndex(snapperLayoutInfo) ?: focusedIndex)?.let {
                 lazyListState.scrollToItem(it)
             }
         }
