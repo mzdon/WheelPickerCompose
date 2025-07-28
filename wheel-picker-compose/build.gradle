@@ -8,7 +8,7 @@ android {
     compileSdk 33
 
     defaultConfig {
-        minSdk 21
+        minSdk 26
         targetSdk 33
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -58,7 +58,7 @@ afterEvaluate {
 
                 groupId = 'com.github.mzdon'
                 artifactId = 'wheel-picker-compose'
-                version = '1.0.2'
+                version = '1.0.3'
             }
         }
     }

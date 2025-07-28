@@ -407,14 +407,6 @@ private data class S(
     val index: Int
 )
 
-fun Duration.isBefore(other: Duration): Boolean {
-    return this.inWholeMilliseconds < other.inWholeMilliseconds
-}
-
-fun Duration.isAfter(other: Duration): Boolean {
-    return this.inWholeMilliseconds > other.inWholeMilliseconds
-}
-
 val Duration.days: Int
     get() = this.toComponents { days, _, _, _, _ -> days.toInt() }
 
@@ -425,28 +417,28 @@ val Duration.minDays: Int
     get() = this.toComponents { days, _, _, _, _ -> days.toInt() }
 
 val Duration.hours: Int
-    get() = this.toComponents { _, hours, _, _, _ -> hours.toInt() }
+    get() = this.toComponents { _, hours, _, _, _ -> hours }
 
 val Duration.maxHours: Int
-    get() = this.toComponents { days, hours, _, _, _ -> if (days > 0) 24 else hours.toInt() }
+    get() = this.toComponents { days, hours, _, _, _ -> if (days > 0) 24 else hours }
 
 val Duration.minHours: Int
-    get() = this.toComponents { days, hours, _, _, _ -> if (days > 0) 0 else hours.toInt() }
+    get() = this.toComponents { days, hours, _, _, _ -> if (days > 0) 0 else hours }
 
 val Duration.minutes: Int
-    get() = this.toComponents { _, _, minutes, _, _ -> minutes.toInt() }
+    get() = this.toComponents { _, _, minutes, _, _ -> minutes }
 
 val Duration.maxMinutes: Int
-    get() = this.toComponents { _, hours, minutes, _, _ -> if (hours > 0) 59 else minutes.toInt() }
+    get() = this.toComponents { days, hours, minutes, _, _ -> if (days > 0 || hours > 0) 59 else minutes }
 
 val Duration.minMinutes: Int
-    get() = this.toComponents { _, hours, minutes, _, _ -> if (hours > 0) 0 else minutes.toInt() }
+    get() = this.toComponents { days, hours, minutes, _, _ -> if (days > 0 || hours > 0) 0 else minutes }
 
 val Duration.seconds: Int
-    get() = this.toComponents { _, _, _, seconds, _ -> seconds.toInt() }
+    get() = this.toComponents { _, _, _, seconds, _ -> seconds }
 
 val Duration.maxSeconds: Int
-    get() = this.toComponents { _, _, minutes, seconds, _ -> if (minutes > 0) 59 else seconds.toInt() }
+    get() = this.toComponents { days, hours, minutes, seconds, _ -> if (days > 0 || hours > 0 || minutes > 0) 59 else seconds }
 
 val Duration.minSeconds: Int
-    get() = this.toComponents { _, _, minutes, seconds, _ -> if (minutes > 0) 0 else seconds.toInt() }
+    get() = this.toComponents { days, hours, minutes, seconds, _ -> if (days > 0 || hours > 0 || minutes > 0) 0 else seconds }

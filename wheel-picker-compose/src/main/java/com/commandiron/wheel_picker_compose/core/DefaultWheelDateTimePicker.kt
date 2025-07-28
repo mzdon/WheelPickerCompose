@@ -29,15 +29,15 @@ internal fun DefaultWheelDateTimePicker(
     textStyle: TextStyle = MaterialTheme.typography.titleMedium,
     textColor: Color = LocalContentColor.current,
     selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
-    onSnappedDateTime : (snappedDateTime: SnappedDateTime) -> Int? = { _ -> null }
+    onSnappedDateTime: (snappedDateTime: SnappedDateTime) -> Int? = { _ -> null }
 ) {
 
     var snappedDateTime by remember { mutableStateOf(startDateTime.truncatedTo(ChronoUnit.MINUTES)) }
 
     val yearTexts = yearsRange?.map { it.toString() } ?: listOf()
 
-    Box(modifier = modifier, contentAlignment = Alignment.Center){
-        if(selectorProperties.enabled().value){
+    Box(modifier = modifier, contentAlignment = Alignment.Center) {
+        if (selectorProperties.enabled().value) {
             Surface(
                 modifier = Modifier
                     .size(size.width, size.height / rowCount),
@@ -52,7 +52,7 @@ internal fun DefaultWheelDateTimePicker(
                 startDate = startDateTime.toLocalDate(),
                 yearsRange = yearsRange,
                 size = DpSize(
-                    width = if(yearsRange == null ) size.width * 3 / 6 else size.width * 3 / 5 ,
+                    width = if (yearsRange == null) size.width * 3 / 6 else size.width * 3 / 5,
                     height = size.height
                 ),
                 rowCount = rowCount,
@@ -63,33 +63,52 @@ internal fun DefaultWheelDateTimePicker(
                 ),
                 onSnappedDate = { snappedDate ->
 
-                    val newDateTime = when(snappedDate) {
+                    val newDateTime = when (snappedDate) {
                         is SnappedDate.DayOfMonth -> {
                             snappedDateTime.withDayOfMonth(snappedDate.snappedLocalDate.dayOfMonth)
                         }
+
                         is SnappedDate.Month -> {
                             snappedDateTime.withMonth(snappedDate.snappedLocalDate.monthValue)
                         }
+
                         is SnappedDate.Year -> {
                             snappedDateTime.withYear(snappedDate.snappedLocalDate.year)
                         }
                     }
 
-                    if(!newDateTime.isBefore(minDateTime) && !newDateTime.isAfter(maxDateTime)) {
+                    if (!newDateTime.isBefore(minDateTime) && !newDateTime.isAfter(maxDateTime)) {
                         snappedDateTime = newDateTime
                     }
 
-                    return@DefaultWheelDatePicker when(snappedDate) {
+                    return@DefaultWheelDatePicker when (snappedDate) {
                         is SnappedDate.DayOfMonth -> {
-                            onSnappedDateTime(SnappedDateTime.DayOfMonth(snappedDateTime,snappedDateTime.dayOfMonth - 1))
+                            onSnappedDateTime(
+                                SnappedDateTime.DayOfMonth(
+                                    snappedDateTime,
+                                    snappedDateTime.dayOfMonth - 1
+                                )
+                            )
                             snappedDateTime.dayOfMonth - 1
                         }
+
                         is SnappedDate.Month -> {
-                            onSnappedDateTime(SnappedDateTime.Month(snappedDateTime,snappedDateTime.month.value - 1))
+                            onSnappedDateTime(
+                                SnappedDateTime.Month(
+                                    snappedDateTime,
+                                    snappedDateTime.month.value - 1
+                                )
+                            )
                             snappedDateTime.month.value - 1
                         }
+
                         is SnappedDate.Year -> {
-                            onSnappedDateTime(SnappedDateTime.Year(snappedDateTime, yearTexts.indexOf(snappedDateTime.year.toString())))
+                            onSnappedDateTime(
+                                SnappedDateTime.Year(
+                                    snappedDateTime,
+                                    yearTexts.indexOf(snappedDateTime.year.toString())
+                                )
+                            )
                             yearTexts.indexOf(snappedDateTime.year.toString())
                         }
                     }
@@ -100,7 +119,7 @@ internal fun DefaultWheelDateTimePicker(
                 startTime = startDateTime.toLocalTime(),
                 timeFormat = timeFormat,
                 size = DpSize(
-                    width = if(yearsRange == null ) size.width * 3 / 6  else size.width * 2 / 5 ,
+                    width = if (yearsRange == null) size.width * 3 / 6 else size.width * 2 / 5,
                     height = size.height
                 ),
                 rowCount = rowCount,
@@ -111,27 +130,39 @@ internal fun DefaultWheelDateTimePicker(
                 ),
                 onSnappedTime = { snappedTime, timeFormat ->
 
-                    val newDateTime = when(snappedTime) {
+                    val newDateTime = when (snappedTime) {
                         is SnappedTime.Hour -> {
                             snappedDateTime.withHour(snappedTime.snappedLocalTime.hour)
                         }
+
                         is SnappedTime.Minute -> {
                             snappedDateTime.withMinute(snappedTime.snappedLocalTime.minute)
                         }
                     }
 
-                    if(!newDateTime.isBefore(minDateTime) && !newDateTime.isAfter(maxDateTime)) {
+                    if (!newDateTime.isBefore(minDateTime) && !newDateTime.isAfter(maxDateTime)) {
                         snappedDateTime = newDateTime
                     }
 
-                    return@DefaultWheelTimePicker when(snappedTime) {
+                    return@DefaultWheelTimePicker when (snappedTime) {
                         is SnappedTime.Hour -> {
-                            onSnappedDateTime(SnappedDateTime.Hour(snappedDateTime, snappedDateTime.hour))
-                            if(timeFormat == TimeFormat.HOUR_24) snappedDateTime.hour else
-                            localTimeToAmPmHour(snappedDateTime.toLocalTime()) - 1
+                            onSnappedDateTime(
+                                SnappedDateTime.Hour(
+                                    snappedDateTime,
+                                    snappedDateTime.hour
+                                )
+                            )
+                            if (timeFormat == TimeFormat.HOUR_24) snappedDateTime.hour else
+                                localTimeToAmPmHour(snappedDateTime.toLocalTime()) - 1
                         }
+
                         is SnappedTime.Minute -> {
-                            onSnappedDateTime(SnappedDateTime.Minute(snappedDateTime, snappedDateTime.minute))
+                            onSnappedDateTime(
+                                SnappedDateTime.Minute(
+                                    snappedDateTime,
+                                    snappedDateTime.minute
+                                )
+                            )
                             snappedDateTime.minute
                         }
                     }
@@ -140,15 +171,3 @@ internal fun DefaultWheelDateTimePicker(
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-

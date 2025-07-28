@@ -30,7 +30,7 @@ fun WheelTextPicker(
         rowCount = rowCount,
         selectorProperties = selectorProperties,
         onScrollFinished = onScrollFinished
-    ){ index ->
+    ) { index ->
         Text(
             text = texts[index],
             style = style,
