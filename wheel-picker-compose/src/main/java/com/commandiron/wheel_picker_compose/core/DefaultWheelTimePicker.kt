@@ -217,13 +217,13 @@ internal fun DefaultWheelTimePicker(
                         enabled = false
                     ),
                     onScrollFinished = { snappedIndex ->
-
+                        val maxAmPmIndex = amPms.maxBy { it.index }.index
+                        val normalizedSnappedIndex = when (snappedIndex > maxAmPmIndex) {
+                            true -> maxAmPmIndex
+                            false -> snappedIndex
+                        }.coerceAtLeast(0)
                         val newAmPm = amPms.find {
-                            if (snappedIndex == 2) {
-                                it.index == 1
-                            } else {
-                                it.index == snappedIndex
-                            }
+                            it.index == normalizedSnappedIndex
                         }
 
                         newAmPm?.let {
@@ -259,7 +259,7 @@ internal fun DefaultWheelTimePicker(
                             }
                         }
 
-                        return@WheelTextPicker snappedIndex
+                        return@WheelTextPicker normalizedSnappedIndex
                     }
                 )
             }
@@ -383,7 +383,7 @@ private data class Minute(
 private data class AmPm(
     val text: String,
     val value: AmPmValue,
-    val index: Int?
+    val index: Int
 )
 
 internal enum class AmPmValue {
