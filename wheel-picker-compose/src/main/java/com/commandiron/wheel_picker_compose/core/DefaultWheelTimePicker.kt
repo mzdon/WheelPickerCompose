@@ -17,10 +17,6 @@ import androidx.compose.ui.unit.dp
 import java.time.LocalTime
 import java.time.temporal.ChronoUnit
 
-fun log(message: String) {
-    println("WheelTimePicker: $message")
-}
-
 @Composable
 internal fun DefaultWheelTimePicker(
     modifier: Modifier = Modifier,
@@ -34,8 +30,9 @@ internal fun DefaultWheelTimePicker(
     textColor: Color = LocalContentColor.current,
     selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
     onSnappedTime: (snappedTime: SnappedTime, timeFormat: TimeFormat) -> Int? = { _, _ -> null },
+    onLog: (log: String) -> Unit = {}
 ) {
-    log("Recomposing - startTime: $startTime")
+    onLog("Recomposing - startTime: $startTime")
 
     var snappedTime by remember { mutableStateOf(startTime.truncatedTo(ChronoUnit.MINUTES)) }
 
@@ -81,7 +78,7 @@ internal fun DefaultWheelTimePicker(
         )
     }
 
-    log("snappedTime: $snappedTime, snappedAmPm: $snappedAmPm")
+    onLog("snappedTime: $snappedTime, snappedAmPm: $snappedAmPm")
 
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         if (selectorProperties.enabled().value) {
@@ -110,7 +107,7 @@ internal fun DefaultWheelTimePicker(
                     enabled = false
                 ),
                 onScrollFinished = { snappedIndex ->
-                    log("Hour onScollFinished - snappedIndex: $snappedIndex")
+                    onLog("Hour onScollFinished - snappedIndex: $snappedIndex")
 
                     val newHour = if (timeFormat == TimeFormat.HOUR_24) {
                         hours.find { it.index == snappedIndex }?.value
@@ -143,7 +140,7 @@ internal fun DefaultWheelTimePicker(
                         }
 
                         newIndex?.let { idx ->
-                            log("onSnappedTime from Hour picker - newIndex: $idx, snappedTime: $snappedTime")
+                            onLog("onSnappedTime from Hour picker - newIndex: $idx, snappedTime: $snappedTime")
                             onSnappedTime(
                                 SnappedTime.Hour(
                                     localTime = snappedTime,
@@ -154,7 +151,7 @@ internal fun DefaultWheelTimePicker(
                         }
                     }
 
-                    log("No newTime from Hour picker - snappedTime: $snappedTime")
+                    onLog("No newTime from Hour picker - snappedTime: $snappedTime")
                     return@WheelTextPicker newIndex
                 }
             )
@@ -173,7 +170,7 @@ internal fun DefaultWheelTimePicker(
                     enabled = false
                 ),
                 onScrollFinished = { snappedIndex ->
-                    log("Minute onScollFinished - snappedIndex: $snappedIndex")
+                    onLog("Minute onScollFinished - snappedIndex: $snappedIndex")
 
                     val newMinute = minutes.find { it.index == snappedIndex }?.value
 
@@ -199,7 +196,7 @@ internal fun DefaultWheelTimePicker(
                             val newIndex = minutes.find { it.value == snappedTime.minute }?.index
 
                             newIndex?.let {
-                                log("onSnappedTime from Minute picker - newIndex: $newIndex, snappedTime: $snappedTime")
+                                onLog("onSnappedTime from Minute picker - newIndex: $newIndex, snappedTime: $snappedTime")
                                 onSnappedTime(
                                     SnappedTime.Minute(
                                         localTime = snappedTime,
@@ -211,7 +208,7 @@ internal fun DefaultWheelTimePicker(
                         }
                     }
 
-                    log("No newTime from Minute picker - snappedTime: $snappedTime")
+                    onLog("No newTime from Minute picker - snappedTime: $snappedTime")
                     return@WheelTextPicker minutes.find { it.value == snappedTime.minute }?.index
                 }
             )
@@ -232,7 +229,7 @@ internal fun DefaultWheelTimePicker(
                         enabled = false
                     ),
                     onScrollFinished = { snappedIndex ->
-                        log("AmPm onScollFinished - snappedIndex: $snappedIndex")
+                        onLog("AmPm onScollFinished - snappedIndex: $snappedIndex")
 
                         val maxAmPmIndex = amPms.maxBy { it.index }.index
                         val normalizedSnappedIndex = when (snappedIndex > maxAmPmIndex) {
@@ -263,7 +260,7 @@ internal fun DefaultWheelTimePicker(
                                 snappedTime = newTime
                             }
 
-                            log("onSnappedTime from AmPm picker - newIndex: $normalizedSnappedIndex, snappedTime: $snappedTime")
+                            onLog("onSnappedTime from AmPm picker - newIndex: $normalizedSnappedIndex, snappedTime: $snappedTime")
                             onSnappedTime(
                                 SnappedTime.AmPm(
                                     localTime = snappedTime,
@@ -273,7 +270,7 @@ internal fun DefaultWheelTimePicker(
                             )?.let { return@WheelTextPicker it }
                         }
 
-                        log("No newTime from AmPm picker - newIndex: $normalizedSnappedIndex, snappedTime: $snappedTime")
+                        onLog("No newTime from AmPm picker - newIndex: $normalizedSnappedIndex, snappedTime: $snappedTime")
                         return@WheelTextPicker normalizedSnappedIndex
                     }
                 )
