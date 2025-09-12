@@ -30,7 +30,9 @@ internal fun DefaultWheelTimePicker(
     textColor: Color = LocalContentColor.current,
     selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
     onSnappedTime: (snappedTime: SnappedTime, timeFormat: TimeFormat) -> Int? = { _, _ -> null },
+    onLog: (log: String) -> Unit = {}
 ) {
+    onLog("Recomposing - startTime: $startTime")
 
     var snappedTime by remember { mutableStateOf(startTime.truncatedTo(ChronoUnit.MINUTES)) }
 
@@ -76,6 +78,8 @@ internal fun DefaultWheelTimePicker(
         )
     }
 
+    onLog("snappedTime: $snappedTime, snappedAmPm: $snappedAmPm")
+
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         if (selectorProperties.enabled().value) {
             Surface(
@@ -103,6 +107,7 @@ internal fun DefaultWheelTimePicker(
                     enabled = false
                 ),
                 onScrollFinished = { snappedIndex ->
+                    onLog("Hour onScollFinished - snappedIndex: $snappedIndex")
 
                     val newHour = if (timeFormat == TimeFormat.HOUR_24) {
                         hours.find { it.index == snappedIndex }?.value
@@ -114,6 +119,12 @@ internal fun DefaultWheelTimePicker(
                         )
                     }
 
+                    var newIndex = if (timeFormat == TimeFormat.HOUR_24) {
+                        hours.find { it.value == snappedTime.hour }?.index
+                    } else {
+                        amPmHours.find { it.value == localTimeToAmPmHour(snappedTime) }?.index
+                    }
+
                     newHour?.let {
 
                         val newTime = snappedTime.withHour(newHour)
@@ -122,28 +133,26 @@ internal fun DefaultWheelTimePicker(
                             snappedTime = newTime
                         }
 
-                        val newIndex = if (timeFormat == TimeFormat.HOUR_24) {
+                        newIndex = if (timeFormat == TimeFormat.HOUR_24) {
                             hours.find { it.value == snappedTime.hour }?.index
                         } else {
                             amPmHours.find { it.value == localTimeToAmPmHour(snappedTime) }?.index
                         }
 
-                        newIndex?.let {
+                        newIndex?.let { idx ->
+                            onLog("onSnappedTime from Hour picker - newIndex: $idx, snappedTime: $snappedTime")
                             onSnappedTime(
                                 SnappedTime.Hour(
                                     localTime = snappedTime,
-                                    index = newIndex
+                                    index = idx
                                 ),
                                 timeFormat
                             )?.let { return@WheelTextPicker it }
                         }
                     }
 
-                    return@WheelTextPicker if (timeFormat == TimeFormat.HOUR_24) {
-                        hours.find { it.value == snappedTime.hour }?.index
-                    } else {
-                        amPmHours.find { it.value == localTimeToAmPmHour(snappedTime) }?.index
-                    }
+                    onLog("No newTime from Hour picker - snappedTime: $snappedTime")
+                    return@WheelTextPicker newIndex
                 }
             )
             //Minute
@@ -161,6 +170,7 @@ internal fun DefaultWheelTimePicker(
                     enabled = false
                 ),
                 onScrollFinished = { snappedIndex ->
+                    onLog("Minute onScollFinished - snappedIndex: $snappedIndex")
 
                     val newMinute = minutes.find { it.index == snappedIndex }?.value
 
@@ -186,6 +196,7 @@ internal fun DefaultWheelTimePicker(
                             val newIndex = minutes.find { it.value == snappedTime.minute }?.index
 
                             newIndex?.let {
+                                onLog("onSnappedTime from Minute picker - newIndex: $newIndex, snappedTime: $snappedTime")
                                 onSnappedTime(
                                     SnappedTime.Minute(
                                         localTime = snappedTime,
@@ -197,6 +208,7 @@ internal fun DefaultWheelTimePicker(
                         }
                     }
 
+                    onLog("No newTime from Minute picker - snappedTime: $snappedTime")
                     return@WheelTextPicker minutes.find { it.value == snappedTime.minute }?.index
                 }
             )
@@ -217,6 +229,8 @@ internal fun DefaultWheelTimePicker(
                         enabled = false
                     ),
                     onScrollFinished = { snappedIndex ->
+                        onLog("AmPm onScollFinished - snappedIndex: $snappedIndex")
+
                         val maxAmPmIndex = amPms.maxBy { it.index }.index
                         val normalizedSnappedIndex = when (snappedIndex > maxAmPmIndex) {
                             true -> maxAmPmIndex
@@ -246,19 +260,17 @@ internal fun DefaultWheelTimePicker(
                                 snappedTime = newTime
                             }
 
-                            val newIndex = minutes.find { it.value == snappedTime.hour }?.index
-
-                            newIndex?.let {
-                                onSnappedTime(
-                                    SnappedTime.Hour(
-                                        localTime = snappedTime,
-                                        index = newIndex
-                                    ),
-                                    timeFormat
-                                )
-                            }
+                            onLog("onSnappedTime from AmPm picker - newIndex: $normalizedSnappedIndex, snappedTime: $snappedTime")
+                            onSnappedTime(
+                                SnappedTime.AmPm(
+                                    localTime = snappedTime,
+                                    index = normalizedSnappedIndex
+                                ),
+                                timeFormat
+                            )?.let { return@WheelTextPicker it }
                         }
 
+                        onLog("No newTime from AmPm picker - newIndex: $normalizedSnappedIndex, snappedTime: $snappedTime")
                         return@WheelTextPicker normalizedSnappedIndex
                     }
                 )
