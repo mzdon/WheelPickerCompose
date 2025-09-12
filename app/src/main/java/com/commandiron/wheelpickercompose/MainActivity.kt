@@ -71,6 +71,21 @@ class MainActivity : ComponentActivity() {
                         ) { snappedDateTime ->
                             println(snappedDateTime)
                         }
+                        WheelTimePicker(
+                            timeFormat = TimeFormat.AM_PM,
+                            size = DpSize(200.dp, 100.dp),
+                            rowCount = 5,
+                            textStyle = MaterialTheme.typography.titleSmall,
+                            textColor = Color(0xFFffc300),
+                            selectorProperties = WheelPickerDefaults.selectorProperties(
+                                enabled = true,
+                                shape = RoundedCornerShape(0.dp),
+                                color = Color(0xFFf1faee).copy(alpha = 0.2f),
+                                border = BorderStroke(2.dp, Color(0xFFf1faee))
+                            )
+                        ) { snappedTime ->
+                            println(snappedTime)
+                        }
                         WheelDurationPicker(
                             startDuration = 15.toDuration(DurationUnit.MINUTES),
                             minDuration = 1.toDuration(DurationUnit.MINUTES),
