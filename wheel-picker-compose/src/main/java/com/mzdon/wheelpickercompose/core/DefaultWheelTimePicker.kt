@@ -270,7 +270,7 @@ internal fun DefaultWheelTimePicker(
                                     index = normalizedSnappedIndex
                                 ),
                                 timeFormat
-                            )
+                            )?.let { return@WheelTextPicker it }
                         }
 
                         log("No newTime from AmPm picker - newIndex: $normalizedSnappedIndex, snappedTime: $snappedTime")
